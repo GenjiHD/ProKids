@@ -4,9 +4,9 @@ import { userSchema } from "../schemas/user.schemeas";
 
 export const getUsers = async () => {
   try {
-    const snapshot = await db.collection("usuarios").get();
-    const usuarios = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    return usuarios;
+    const snapshot = await db.collection("Usuarios").get();
+    const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return users;
   } catch (err) {
     console.error("Error al obtener los usuarios", err);
     return { error: "No se pudieron obtener los usuarios" };
@@ -19,7 +19,7 @@ export const createUser = async (newUser: NewUser) => {
     if (!validation.success) {
       return { error: validation.error };
     }
-    const docRef = await db.collection("usuarios").add(newUser);
+    const docRef = await db.collection("Usuarios").add(newUser);
     return { id: docRef.id, ...newUser };
   } catch (err) {
     console.error("Error al crear el usuario", err);
@@ -33,7 +33,7 @@ export const updateUser = async (id: string, updatedData: Partial<User>) => {
     if (!validation.success) {
       return { error: validation.error };
     }
-    await db.collection("usuarios").doc(id).update(updatedData);
+    await db.collection("Usuarios").doc(id).update(updatedData);
     return { id, ...updatedData };
   } catch (err) {
     console.error("Error al actualizar los datos", err);
@@ -43,7 +43,7 @@ export const updateUser = async (id: string, updatedData: Partial<User>) => {
 
 export const deleteUser = async (id: string) => {
   try {
-    await db.collection("usuarios").doc(id).delete();
+    await db.collection("Usuarios").doc(id).delete();
     return { success: `Usuario con ID ${id} eliminado correctamente` };
   } catch (err) {
     console.error("Error al eliminar el usuario", err);
@@ -53,14 +53,14 @@ export const deleteUser = async (id: string) => {
 
 export const findUserByEmail = async (email: string) => {
   try {
-    const snapshot = await db.collection("usuarios").where("correo", "==", email).limit(1).get();
+    const snapshot = await db.collection("Usuarios").where("correo", "==", email).limit(1).get();
 
     if (snapshot.empty) {
       throw new Error("No se encontró ningún usuario con este correo");
     }
 
-    const doc = snapshot.docs[0];
-    return { id: doc.id, ...doc.data() };
+    const docRef = snapshot.docs[0];
+    return { id: docRef.id, ...docRef.data() };
   } catch (err) {
     console.error("Error al buscar el correo del usuario:", err);
     throw new Error("No se pudo encontrar este usuario");
