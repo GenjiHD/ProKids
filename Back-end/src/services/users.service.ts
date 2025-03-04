@@ -17,16 +17,15 @@ export const createUser = async (newUser: NewUser) => {
   try {
     const validation = userSchema.safeParse(newUser);
     if (!validation.success) {
-      return { error: validation.error };
+      return { error: validation.error.errors };
     }
     const docRef = await db.collection("Usuarios").add(newUser);
     return { id: docRef.id, ...newUser };
   } catch (err) {
-    console.error("Error al crear el usuario", err);
+    console.error("Error al crear el usuario:", err);
     return { error: "No se pudo crear el nuevo usuario" };
   }
 };
-
 export const updateUser = async (id: string, updatedData: Partial<User>) => {
   try {
     const validation = userSchema.partial().safeParse(updatedData);
@@ -53,7 +52,7 @@ export const deleteUser = async (id: string) => {
 
 export const findUserByEmail = async (email: string) => {
   try {
-    const snapshot = await db.collection("Usuarios").where("correo", "==", email).limit(1).get();
+    const snapshot = await db.collection("Usuarios").where("Correo", "==", email).limit(1).get();
 
     if (snapshot.empty) {
       throw new Error("No se encontró ningún usuario con este correo");

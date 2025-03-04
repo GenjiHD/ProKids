@@ -5,20 +5,20 @@ const emailComercialRegEx = /^[a-zA-Z0-9._%+-]+@(gmail\.com|outlook\.com|hotmail
 
 
 export const userSchema = z.object({
-  nombre: z.string()
+  Nombre: z.string()
     .min(3, "El nombre debe tener al menos 3 caracteres")
     .max(50, "El nombre no puede tener mas de 50 caracteres")
     .regex(descriptionRegex, "El nombre solo puede contener letras y espacios"),
 
-  correo: z.string()
+  Correo: z.string()
     .regex(emailComercialRegEx, "Debe ser un correo valido como Gmail, Outlook, Hotmail, Yahoo, iCloud, AOL,Zoho o ProtonMail")
     .max(200, "El correo no debe superar os 200 caracterse"),
 
-  apodo: z.string()
+  Apodo: z.string()
     .min(3, "El apodo debe tener al menos 3 caracteres")
     .max(50, "El apodo no puede tener mas de 50 caracteres"),
 
-  edad: z.number()
+  Edad: z.number()
     .int("La edad debe ser un numero entero")
     .min(6, "La edad deber ser igual o mayor a 6")
     .max(13, "La edad no puede ser mayor a 13"),

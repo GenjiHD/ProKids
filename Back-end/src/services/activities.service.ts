@@ -30,7 +30,7 @@ export const createActivity = async (newActivity: NewActivity) => {
 
 export const updateActivity = async (id: string, updatedData: Partial<Activity>) => {
   try {
-    const activityRef = db.collection("actividades").doc(id);
+    const activityRef = db.collection("Actividades").doc(id);
 
     const doc = await activityRef.get();
     if (!doc.exists) {
