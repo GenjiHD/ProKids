@@ -1,16 +1,14 @@
 import express from 'express';
 import cors from 'cors';
-import userRoutes from "./routes/user.routes";
-import activitiesRoutes from "./routes/activities.routes";
+import userRoutes from '../src/routes/user.routes';
 
 const app = express();
 
-// Configuracion del servidor
+// Configuración del servidor
 app.use(cors());
 app.use(express.json());
 
-// Aqui hiran las rutas cuando las tenga
-app.use("/users", userRoutes);
-app.use("/activities", activitiesRoutes);
+// Montar las rutas de usuarios bajo /api
+app.use('/api', userRoutes);
 
 export default app;
