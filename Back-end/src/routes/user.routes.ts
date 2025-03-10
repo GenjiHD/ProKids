@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUsers, createUser, updateUser, deleteUser, } from '../services/user.services';
+import { getUsers, createUser, updateUser, deleteUser, getusersByID, } from '../services/user.services';
 import { NewUser, User } from '../types/users.types';
 
 const router = express.Router();
@@ -13,6 +13,23 @@ router.get('/users', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener los usuarios' });
   }
 });
+
+router.get('/users/:id', async (req, res) => {
+  const userID = req.params.id;
+
+  try {
+    const user = await getusersByID(userID);
+
+    if (!user) {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error al obtener el usuario: ', error);
+    res.status(500).json({ error: 'Error al obtener el usuario' });
+  }
+})
 
 // POST /users - Crear un nuevo usuario
 router.post('/users', async (req, res) => {
