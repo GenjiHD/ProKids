@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "354910518833",
+    "project_id": "prokids-634d9",
+    "storage_bucket": "prokids-634d9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354910518833:android:d4b1f382c7774fc8d55f10",
+        "android_client_info": {
+          "package_name": "com.example.front_end"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354910518833-b9s2be4kgvons8l7dii0g4v2db7otd2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANNh6rXpne9ej77dsnUFcBb-x_8Eihh9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354910518833-b9s2be4kgvons8l7dii0g4v2db7otd2a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354910518833:android:a5715e65e08bb1dad55f10",
+        "android_client_info": {
+          "package_name": "com.prokids.prokidsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354910518833-b9s2be4kgvons8l7dii0g4v2db7otd2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANNh6rXpne9ej77dsnUFcBb-x_8Eihh9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354910518833-b9s2be4kgvons8l7dii0g4v2db7otd2a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

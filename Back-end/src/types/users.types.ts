@@ -3,6 +3,7 @@ export interface NewUser {
   correo: string;
   apodo: string;
   edad: number;
+  password: string;
 }
 
 export interface User {
@@ -10,4 +11,5 @@ export interface User {
   correo?: string;
   apodo?: string;
   edad?: number;
+  password?: string;
 }

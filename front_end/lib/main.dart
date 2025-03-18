@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:prueba/screens/create_account_screen.dart';
-import 'package:prueba/screens/login_screen.dart';
-import 'package:prueba/screens/to_do_screen.dart';
+import 'package:front_end/screens/create_account_screen.dart';
+import 'package:front_end/screens/login_screen.dart';
+import 'package:front_end/screens/to_do_screen.dart';
+import 'package:front_end/screens/activity_detail_screen.dart'; // Asegúrate de importar la pantalla de detalle
 import 'screens/welcome_screen.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();  // Aseguramos que el entorno Flutter esté listo.
+  WidgetsFlutterBinding.ensureInitialized(); // Aseguramos que el entorno Flutter esté listo.
   runApp(const MyApp());
 }
 
@@ -18,11 +19,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/', // Ruta inicial
       routes: {
-        '/': (context) => SplashScreen(),  // La pantalla de carga es la inicial
-        '/welcome': (context) => const WelcomeScreen(),  // Se dirige a la pantalla de bienvenida
+        '/': (context) => SplashScreen(), // La pantalla de carga es la inicial
+        '/welcome':
+            (context) =>
+                const WelcomeScreen(), // Se dirige a la pantalla de bienvenida
         '/login': (context) => const LoginScreen(),
         '/todo': (context) => const ToDoScreen(),
         '/createAccount': (context) => const CreateAccountScreen(),
+        '/activityDetail':
+            (context) => const ActivityDetailScreen(
+              activity: {},
+            ), // Asegúrate de pasar los parámetros correctos
       },
     );
   }
@@ -48,9 +55,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0073e6),  // Azul fuerte de la app
+      backgroundColor: const Color(0xFF0073e6), // Azul fuerte de la app
       body: Center(
-        child: Image.asset('assets/dinosaurio.png', width: 200, height: 200),  // Logo
+        child: Image.asset(
+          'assets/dinosaurio.png',
+          width: 200,
+          height: 200,
+        ), // Logo
       ),
     );
   }

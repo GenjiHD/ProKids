@@ -21,6 +21,7 @@ export const getUsers = async (): Promise<User[]> => {
         correo: userData.Correo,
         apodo: userData.Apodo,
         edad: userData.Edad,
+        password: userData.Password,
       } as User);
     }
 
@@ -103,6 +104,7 @@ export const getusersByID = async (id: string): Promise<User | null> => {
       correo: userData?.Correo,
       apodo: userData?.Apodo,
       edad: userData?.Edad,
+      password: userData?.Password
     } as User;
   } catch (error) {
     console.error('Error al obtener el usuario por ID', error);
