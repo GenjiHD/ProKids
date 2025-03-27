@@ -44,7 +44,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
                 opacity: opacity,
                 duration: const Duration(seconds: 1),
                 child: Image.asset(
-                  'assets/dinosaurio.png',  // Asegúrate de que sea una imagen con fondo transparente
+                  '../../assets/dinosaurio.png',  // Asegúrate de que sea una imagen con fondo transparente
                   width: 200,  // Ajusta el tamaño si es necesario
                   height: 200,  // Ajusta el tamaño si es necesario
                 ),
