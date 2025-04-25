@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: const Color(0xFF0073e6), // Azul fuerte de la app
       body: Center(
         child: Image.asset(
-          '../../assets/dinosaurio.png',
+          '../assets/dinosaurio.png',
           width: 200,
           height: 200,
         ), // Logo

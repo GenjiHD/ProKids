@@ -3,6 +3,7 @@ import cors from 'cors';
 import userRoutes from '../src/routes/user.routes';
 import activitiesRoutes from '../src/routes/activities.routes';
 
+
 const app = express();
 
 // Configuración del servidor

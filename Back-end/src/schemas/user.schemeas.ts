@@ -25,7 +25,6 @@ export const userSchema = z.object({
 
   Password: z.string()
     .min(8, "La contraseña debe tener al menos 8 caracteres")
-    .regex(passwordRegex, "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial")
 });
 
 export const userSchemaPartial = userSchema.partial();

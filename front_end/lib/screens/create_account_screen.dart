@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -12,7 +14,10 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController(); // Campo para confirmar contraseña
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController nicknameController =
+      TextEditingController(); // Campo Apodo
 
   @override
   Widget build(BuildContext context) {
@@ -35,33 +40,121 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                 children: [
                   const Text(
                     'Crear Cuenta',
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   _buildTextField(nameController, 'Nombre', Icons.person),
-                  _buildTextField(ageController, 'Edad', Icons.cake, isNumber: true),
-                  _buildTextField(emailController, 'Correo Electrónico', Icons.email),
-                  _buildTextField(passwordController, 'Contraseña', Icons.lock, isPassword: true),
-                  _buildTextField(confirmPasswordController, 'Confirmar Contraseña', Icons.lock, isPassword: true), // Campo adicional
+                  _buildTextField(
+                    nicknameController,
+                    'Apodo',
+                    Icons.account_circle,
+                  ), // Campo Apodo
+                  _buildTextField(
+                    ageController,
+                    'Edad',
+                    Icons.cake,
+                    isNumber: true,
+                  ),
+                  _buildTextField(
+                    emailController,
+                    'Correo Electrónico',
+                    Icons.email,
+                  ),
+                  _buildTextField(
+                    passwordController,
+                    'Contraseña',
+                    Icons.lock,
+                    isPassword: true,
+                  ),
+                  _buildTextField(
+                    confirmPasswordController,
+                    'Confirmar Contraseña',
+                    Icons.lock,
+                    isPassword: true,
+                  ),
                   const SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: () {
-                      // Aquí agregamos la lógica para guardar la cuenta del usuario
-                      // Puedes guardarlo en una base de datos o en SharedPreferences para persistencia
+                    onPressed: () async {
+                      final nombre = nameController.text.trim();
+                      final apodo = nicknameController.text.trim();
+                      final edadText = ageController.text.trim();
+                      final correo = emailController.text.trim();
+                      final password = passwordController.text;
+                      final confirmPassword = confirmPasswordController.text;
 
-                      // Luego de guardar, redirigimos al LoginScreen
-                      Navigator.pushReplacementNamed(context, '/login'); // Regresa a la pantalla de login
+                      if (password != confirmPassword) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Las contraseñas no coinciden'),
+                          ),
+                        );
+                        return;
+                      }
+
+                      final edad = int.tryParse(edadText);
+                      if (edad == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Edad inválida')),
+                        );
+                        return;
+                      }
+
+                      final uri = Uri.parse('http://localhost:5000/api/users');
+
+                      try {
+                        final response = await http.post(
+                          uri,
+                          headers: {'Content-Type': 'application/json'},
+                          body: jsonEncode({
+                            'Nombre': nombre,
+                            'Apodo': apodo,
+                            'Correo': correo,
+                            'Edad': edad,
+                            'Password': password,
+                          }),
+                        );
+
+                        if (response.statusCode == 201) {
+                          // Usuario creado correctamente
+                          Navigator.popAndPushNamed(context, '/login');
+                        } else {
+                          // Algo salió mal
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Error al crear el usuario: ${response.body}',
+                              ),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error de red: $e')),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       elevation: 10,
                     ),
                     child: const Text(
                       'CREAR CUENTA',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -73,7 +166,13 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isPassword = false, bool isNumber = false}) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon, {
+    bool isPassword = false,
+    bool isNumber = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(

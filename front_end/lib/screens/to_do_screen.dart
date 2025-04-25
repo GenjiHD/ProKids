@@ -3,7 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'activity_detail_screen.dart'; // Asegúrate de importar la pantalla de detalle
+import 'activity_detail_screen.dart';
 
 class ToDoScreen extends StatefulWidget {
   const ToDoScreen({super.key});
@@ -12,12 +12,14 @@ class ToDoScreen extends StatefulWidget {
   _ToDoScreenState createState() => _ToDoScreenState();
 }
 
-class _ToDoScreenState extends State<ToDoScreen> 
+class _ToDoScreenState extends State<ToDoScreen>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   late AnimationController _controller;
   late Animation<double> _opacity;
   late Animation<Offset> _slide;
+  List<dynamic> _activities = [];
+  String? userId;
 
   @override
   void initState() {
@@ -31,8 +33,54 @@ class _ToDoScreenState extends State<ToDoScreen>
       begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
-    
+
     _controller.forward();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString('userId');
+    });
+  }
+
+  Future<void> _fetchActivities() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:5000/api/activities'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> activities = json.decode(response.body);
+        setState(() {
+          _activities = activities;
+        });
+      } else {
+        _showSnackBar('Error al obtener actividades: ${response.statusCode}');
+      }
+    } catch (e) {
+      _showSnackBar('Error de conexión: $e');
+    }
+  }
+
+  bool _verificarSiYaRespondio(Map<String, dynamic> activity) {
+    if (userId == null) return false;
+    List<dynamic> respuestas = activity['Respuestas'] ?? [];
+    return respuestas.any((respuesta) => respuesta['UsuarioId'] == userId);
+  }
+
+  void _navigateToActivityDetail(Map<String, dynamic> activity) {
+    bool yaRespondido = _verificarSiYaRespondio(activity);
+
+    if (!yaRespondido) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ActivityDetailScreen(activity: activity),
+        ),
+      );
+    }
   }
 
   @override
@@ -52,10 +100,7 @@ class _ToDoScreenState extends State<ToDoScreen>
       ),
       body: FadeTransition(
         opacity: _opacity,
-        child: SlideTransition(
-          position: _slide,
-          child: _getCurrentScreen(),
-        ),
+        child: SlideTransition(position: _slide, child: _getCurrentScreen()),
       ),
       bottomNavigationBar: _buildBottomNavBar(),
     );
@@ -112,6 +157,57 @@ class _ToDoScreenState extends State<ToDoScreen>
     );
   }
 
+  Widget _buildActivitiesList() {
+    if (_activities.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("No hay actividades disponibles"),
+            TextButton(
+              onPressed: _fetchActivities,
+              child: const Text("Recargar actividades"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: _activities.length,
+      itemBuilder: (context, index) {
+        final activity = _activities[index];
+        bool yaRespondido = _verificarSiYaRespondio(activity);
+
+        return GestureDetector(
+          onTap: () => _navigateToActivityDetail(activity),
+          child: Card(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ListTile(
+              leading: Icon(
+                activity['TipoActividad'] == "Escritura"
+                    ? Icons.edit
+                    : Icons.checklist,
+                color: Colors.blue.shade800,
+                size: 30,
+              ),
+              title: Text(
+                activity['Nombre'] ?? 'Sin nombre',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(yaRespondido ? "✅ Contestado" : "❗ No contestado"),
+              tileColor: yaRespondido ? Colors.green.shade100 : Colors.white,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildTutorialScreen() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -121,12 +217,14 @@ class _ToDoScreenState extends State<ToDoScreen>
           _buildTutorialSection(
             icon: Icons.home,
             title: "Inicio",
-            description: "Pantalla principal con información básica de la aplicación.",
+            description:
+                "Pantalla principal con información básica de la aplicación.",
           ),
           _buildTutorialSection(
             icon: Icons.flag,
             title: "Ejercicios",
-            description: "Contiene todas las actividades disponibles. Los iconos indican:\n"
+            description:
+                "Contiene todas las actividades disponibles. Los iconos indican:\n"
                 "✅ Actividad completada\n"
                 "❗ Actividad pendiente",
           ),
@@ -141,9 +239,15 @@ class _ToDoScreenState extends State<ToDoScreen>
           ),
           const SizedBox(height: 15),
           _buildStepGuide("1", "Navega entre secciones con el menú inferior"),
-          _buildStepGuide("2", "En 'Ejercicios' encontrarás todas las actividades"),
+          _buildStepGuide(
+            "2",
+            "En 'Ejercicios' encontrarás todas las actividades",
+          ),
           _buildStepGuide("3", "Toca cualquier actividad para comenzar"),
-          _buildStepGuide("4", "Marca tus respuestas cuando completes un ejercicio"),
+          _buildStepGuide(
+            "4",
+            "Marca tus respuestas cuando completes un ejercicio",
+          ),
         ],
       ),
     );
@@ -176,10 +280,7 @@ class _ToDoScreenState extends State<ToDoScreen>
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    description,
-                    style: const TextStyle(fontSize: 14),
-                  ),
+                  Text(description, style: const TextStyle(fontSize: 14)),
                 ],
               ),
             ),
@@ -213,20 +314,10 @@ class _ToDoScreenState extends State<ToDoScreen>
             ),
           ),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 15),
-            ),
-          ),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 15))),
         ],
       ),
     );
-  }
-
-  Widget _buildActivitiesList() {
-    // Mantén tu implementación original de la lista de actividades
-    return const Center(child: Text("Lista de actividades"));
   }
 
   BottomNavigationBar _buildBottomNavBar() {
@@ -238,17 +329,13 @@ class _ToDoScreenState extends State<ToDoScreen>
       onTap: (index) {
         setState(() {
           _selectedIndex = index;
+          if (index == 1)
+            _fetchActivities(); // Cargar actividades al seleccionar Ejercicios
         });
       },
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: "Inicio",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.flag),
-          label: "Ejercicios",
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
+        BottomNavigationBarItem(icon: Icon(Icons.flag), label: "Ejercicios"),
         BottomNavigationBarItem(
           icon: Icon(Icons.help_outline),
           label: "Tutorial",
@@ -257,9 +344,16 @@ class _ToDoScreenState extends State<ToDoScreen>
     );
   }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 }
+
