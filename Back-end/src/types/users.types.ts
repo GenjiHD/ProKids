@@ -4,6 +4,9 @@ export interface NewUser {
   apodo: string;
   edad: number;
   password: string;
+  ejerciciosResueltos: number; // Nuevo campo
+  puntuacion: number; // Nuevo campo
+
 }
 
 export interface User {
@@ -11,5 +14,8 @@ export interface User {
   correo?: string;
   apodo?: string;
   edad?: number;
-  password?: string;
+  password?: string,
+  ejerciciosResueltos?: number; // Nuevo campo
+  puntuacion?: number; // Nuevo campo
+
 }
