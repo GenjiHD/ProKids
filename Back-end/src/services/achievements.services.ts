@@ -18,8 +18,10 @@ export const getAchievement = async (): Promise<Achievement[]> => {
       const achievementData = doc.data();
       achievements.push({
         id: doc.id,
-        Nombre: achievementData.Nombre,
-        Descripcion: achievementData.Descripcion,
+        nombre: achievementData.Nombre,
+        descripcion: achievementData.Descripcion,
+        requisito: achievementData.Requisito,
+        usuariosLogro: achievementData.UsuariosConLogro ?? [] // CORREGIDO
       } as Achievement);
     });
 
@@ -30,7 +32,7 @@ export const getAchievement = async (): Promise<Achievement[]> => {
   }
 }
 
-export const createAchievement = async (achievementData: NewAchievement) => {
+export const createAchievement = async (achievementData: NewAchievement): Promise<{ success: boolean; id?: string; error?: any }> => {
   try {
     const validation = achievementSchema.safeParse(achievementData);
 
@@ -48,9 +50,9 @@ export const createAchievement = async (achievementData: NewAchievement) => {
   }
 }
 
-export const updateAchievement = async (id: string, achievementData: Partial<Achievement>) => {
+export const updateAchievement = async (id: string, achievementData: Partial<Achievement>): Promise<{ success: boolean; error?: any }> => {
   try {
-    const validation = achievementSchema.safeParse(achievementData);
+    const validation = achievementSchemaPartial.safeParse(achievementData); // CORREGIDO
 
     if (!validation.success) {
       return { success: false, error: validation.error.errors };
@@ -66,7 +68,7 @@ export const updateAchievement = async (id: string, achievementData: Partial<Ach
   }
 }
 
-export const deleteAchievement = async (id: string) => {
+export const deleteAchievement = async (id: string): Promise<{ success: boolean; error?: any }> => {
   try {
     const achievementRef = db.collection("Logros").doc(id);
 
@@ -83,3 +85,4 @@ export const deleteAchievement = async (id: string) => {
     return { success: false, error: 'Error al eliminar el logro' };
   }
 }
+
