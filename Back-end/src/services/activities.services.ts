@@ -1,6 +1,6 @@
 import { db } from '../config/firebase';
 import { Activity, NewActivity } from '../types/activities.types';
-import { activitySchema, activitySchemaPartial } from '../schemas/ativities.schema';
+import { activitySchema, activitySchemaPartial } from '../schemas/activities.schema';
 
 export const getActivity = async (): Promise<Activity[]> => {
   try {

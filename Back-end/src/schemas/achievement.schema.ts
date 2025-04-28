@@ -16,5 +16,4 @@ export const achievementSchema = z.object({
   UsuariosConLogro: z.array(z.string()).optional(), // Puede venir o no en la creación
 });
 
-export const achievementSchemaPartial = achievementSchema.partial();
-
+export const achievementSchemaPartial = achievementSchema.partial(); 

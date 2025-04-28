@@ -1,6 +1,6 @@
 import { db } from '../config/firebase';
 import { User, NewUser } from '../types/users.types';
-import { userSchema, userSchemaPartial } from '../schemas/user.schemeas';
+import { userSchema, userSchemaPartial } from '../schemas/user.schema';
 
 // Obtener todos los usuarios
 export const getUsers = async (): Promise<User[]> => {
