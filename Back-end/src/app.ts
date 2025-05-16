@@ -3,6 +3,7 @@ import cors from 'cors';
 import userRoutes from '../src/routes/user.routes';
 import activitiesRoutes from '../src/routes/activities.routes';
 import achievementsRoutes from '../src/routes/achievements.routes';
+import activitiesUsersRoutes from '../src/routes/activitiesUsers.routes';
 
 
 const app = express();
@@ -15,5 +16,6 @@ app.use(express.json());
 app.use('/api', userRoutes);
 app.use('/api', activitiesRoutes);
 app.use('/api', achievementsRoutes);
+app.use('/api', activitiesUsersRoutes);
 
 export default app;
