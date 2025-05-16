@@ -1,9 +1,9 @@
 export interface NewActivityUser {
   actividadID: string;
   usuarioID: string;
-  tiempo: number;
-  respuesta: string;
-  fecha: string;
+  tiempo: number;             // Tiempo en segundos
+  respuesta: string | boolean; // Puede ser texto o true/false
+  fecha: string;              // Formato: dd-mm-aa
 }
 
 export interface ActivityUser {
@@ -11,6 +11,6 @@ export interface ActivityUser {
   actividadID?: string;
   usuarioID?: string;
   tiempo?: number;
-  respuesta?: string;
+  respuesta?: string | boolean;
   fecha?: string;
 }

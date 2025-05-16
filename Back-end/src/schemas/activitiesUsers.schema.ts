@@ -17,8 +17,10 @@ export const activityUserSchema = z.object({
   Fecha: z.string()
     .regex(fechaRegex, "La fecha debe tener el formato dd-mm-aa"),
 
-  Respuesta: z.string()
-    .min(1, "La respuesta no puede estar vacía"),
+  Respuesta: z.union([
+    z.string().min(1, "La respuesta no puede estar vacía"),
+    z.boolean()
+  ]),
 });
 
 export const activityUserSchemaPartial = activityUserSchema.partial();

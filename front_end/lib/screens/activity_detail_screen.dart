@@ -22,7 +22,7 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
     _loadUserId(); // Cargar el ID del usuario al iniciar la pantalla
   }
 
-  /// 🔥 Cargar el ID del usuario autenticado desde SharedPreferences
+  /// Cargar el ID del usuario autenticado desde SharedPreferences
   Future<void> _loadUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -30,7 +30,7 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
     });
   }
 
-  /// 🔥 Función para verificar la respuesta
+  /// Función para verificar la respuesta
   Future<void> _verifyAnswer() async {
     String correctAnswer = widget.activity["RespuestaCorrecta"] ?? "";
     String userAnswer = _answerController.text.trim();
@@ -46,7 +46,7 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
     }
   }
 
-  /// 🔥 Guarda la respuesta del usuario en Firestore
+  /// Guarda la respuesta del usuario en Firestore
   Future<void> _guardarRespuesta(String respuesta) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     DocumentReference docRef = firestore
