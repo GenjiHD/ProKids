@@ -1,4 +1,5 @@
 // Tipo para el nivel de dificultad
+// Tipo para el nivel de dificultad
 export type DifficultyLevel = 'Básico' | 'Intermedio' | 'Avanzado';
 
 // Tipo para el tipo de actividad
@@ -10,13 +11,25 @@ export interface NewActivity {
   descripcion: string;
   nivelDificultad: DifficultyLevel;
   tipoActividad: ActivityType;
+
+  // Para ambos tipos
+  respuestaEsperada: string;
+
+  // Solo para "Opción múltiple"
+  opciones?: string[];
 }
 
-// Interfaz para una actividad existente (todos los campos son opcionales)
 export interface Activity {
-  id?: string; // El ID es opcional porque lo genera Firebase
+  id?: string;
   nombre?: string;
   descripcion?: string;
   nivelDificultad?: DifficultyLevel;
   tipoActividad?: ActivityType;
+
+  respuestaEsperada?: string;
+  opciones?: string[];
+
+  // Si decides guardar la puntuación directamente
+  puntos?: number;
 }
+

@@ -24,7 +24,16 @@ export const userSchema = z.object({
     .max(13, "La edad no puede ser mayor a 13"),
 
   Password: z.string()
-    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .min(8, "La contraseña debe tener al menos 8 caracteres"),
+
+  EjerciciosResueltos: z.number()
+    .int("Ejercicios resueltos debe ser un número entero")
+    .min(0, "Ejercicios resueltos no puede ser negativo"),
+
+  Puntuacion: z.number()
+    .int("La puntuación debe ser un número entero")
+    .min(0, "La puntuación no puede ser negativa"),
 });
 
 export const userSchemaPartial = userSchema.partial();
+

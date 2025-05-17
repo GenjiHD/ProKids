@@ -4,9 +4,8 @@ export interface NewUser {
   apodo: string;
   edad: number;
   password: string;
-  ejerciciosResueltos: number; // Nuevo campo
-  puntuacion: number; // Nuevo campo
-
+  ejerciciosResueltos: number; // Número total de ejercicios resueltos
+  puntuacion: number;          // Puntuación total acumulada
 }
 
 export interface User {
@@ -14,8 +13,8 @@ export interface User {
   correo?: string;
   apodo?: string;
   edad?: number;
-  password?: string,
-  ejerciciosResueltos?: number; // Nuevo campo
-  puntuacion?: number; // Nuevo campo
-
+  password?: string;
+  ejerciciosResueltos?: number; // Opcional para actualización o lectura
+  puntuacion?: number;          // Opcional para actualización o lectura
 }
+

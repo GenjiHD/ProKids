@@ -4,10 +4,10 @@ import { z } from "zod";
 const fechaRegex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[012])-\d{2}$/;
 
 export const activityUserSchema = z.object({
-  UsuarioId: z.string()
+  UsuarioID: z.string()
     .min(1, "El ID del usuario es requerido"),
 
-  ActividadId: z.string()
+  ActividadID: z.string()
     .min(1, "El ID de la actividad es requerido"),
 
   Tiempo: z.number()

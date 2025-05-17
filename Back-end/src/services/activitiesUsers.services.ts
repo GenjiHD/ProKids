@@ -46,12 +46,13 @@ export const getActivitiesUsersById = async (usuarioID: string) => {
 export const createActivitiesUsers = async (data: NewActivityUser) => {
   try {
     const validation = activityUserSchema.safeParse({
-      UsuarioId: data.usuarioID,
-      ActividadId: data.actividadID,
-      Tiempo: data.tiempo,
-      Feha: data.fecha,
-      Respuesta: data.respuesta
+      UsuarioID: data.UsuarioID,
+      ActividadID: data.ActividadID,
+      Tiempo: data.Tiempo,
+      Fecha: data.Fecha,
+      Respuesta: data.Respuesta
     });
+
 
     if (!validation.success) {
       return {
@@ -61,12 +62,13 @@ export const createActivitiesUsers = async (data: NewActivityUser) => {
     }
 
     await db.collection('ActividadesUsuarios').add({
-      UsuarioId: data.usuarioID,
-      ActividadId: data.actividadID,
-      Tiempo: data.tiempo,
-      Feha: data.fecha,
-      Respuesta: data.respuesta
+      UsuarioID: data.UsuarioID,
+      ActividadID: data.ActividadID,
+      Tiempo: data.Tiempo,
+      Fecha: data.Fecha,
+      Respuesta: data.Respuesta
     });
+
 
     return { success: true };
   } catch (error) {
@@ -75,11 +77,12 @@ export const createActivitiesUsers = async (data: NewActivityUser) => {
   }
 }
 
+
 // Metodo para eliminar el progreso de un usuario
 export const deleteActivitiesUsers = async (usuarioID: string) => {
   try {
     const snapshot = await db.collection('ActividadesUsuarios')
-      .where('UsuarioId', '==', usuarioID)
+      .where('UsuarioID', '==', usuarioID)
       .get();
 
     const batch = db.batch();

@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUsers, createUser, updateUser, deleteUser, getusersByID, } from '../services/user.services';
+import { getUsers, createUser, updateUser, deleteUser, getUserByID, } from '../services/user.services';
 import { NewUser, User } from '../types/users.types';
 
 const router = express.Router();
@@ -18,7 +18,7 @@ router.get('/users/:id', async (req, res) => {
   const userID = req.params.id;
 
   try {
-    const user = await getusersByID(userID);
+    const user = await getUserByID(userID);
 
     if (!user) {
       res.status(404).json({ error: 'Usuario no encontrado' });

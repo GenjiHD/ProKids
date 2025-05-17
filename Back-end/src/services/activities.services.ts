@@ -4,27 +4,23 @@ import { activitySchema, activitySchemaPartial } from '../schemas/activities.sch
 
 export const getActivity = async (): Promise<Activity[]> => {
   try {
-    // Obtener la referencia a la colección de actividades
     const activitiesRef = db.collection('Actividades');
-
-    // Obtener todos los documentos de la colección
     const snapshot = await activitiesRef.get();
 
-    // Si no hay documentos, retornar un array vacío
-    if (snapshot.empty) {
-      return [];
-    }
+    if (snapshot.empty) return [];
 
-    // Mapear los documentos a un array de actividades
     const activities: Activity[] = [];
     snapshot.forEach((doc) => {
-      const activityData = doc.data();
+      const data = doc.data();
       activities.push({
         id: doc.id,
-        Nombre: activityData.Nombre,
-        Descripcion: activityData.Descripcion,
-        Dificultad: activityData.Dificultad,
-        TipoActividad: activityData.TipoActividad,
+        Nombre: data.Nombre,
+        Descripcion: data.Descripcion,
+        Dificultad: data.Dificultad,
+        TipoActividad: data.TipoActividad,
+        RespuestaEsperada: data.RespuestaEsperada,
+        Opciones: data.Opciones,
+        Puntos: data.Puntos, // incluir puntos si está guardado
       } as Activity);
     });
 
@@ -33,32 +29,31 @@ export const getActivity = async (): Promise<Activity[]> => {
     console.error('Error al obtener las actividades: ', error);
     throw new Error('Error al obtener las actividades');
   }
-}
+};
 
 export const getActivityByID = async (id: string): Promise<Activity | null> => {
   try {
-    const activityRef = db.collection('Actividades').doc(id);
+    const doc = await db.collection('Actividades').doc(id).get();
 
-    const doc = await activityRef.get();
+    if (!doc.exists) return null;
 
-    if (!doc.exists) {
-      return null;
-    }
-
-    const activityData = doc.data();
+    const data = doc.data();
 
     return {
       id: doc.id,
-      nombre: activityData?.Nombre,
-      descripcion: activityData?.Descripcion,
-      dificultad: activityData?.Dificultad,
-      tipoActividad: activityData?.TipoActividad,
+      Nombre: data?.Nombre,
+      Descripcion: data?.Descripcion,
+      Dificultad: data?.Dificultad,
+      TipoActividad: data?.TipoActividad,
+      RespuestaEsperada: data?.RespuestaEsperada,
+      Opciones: data?.Opciones,
+      Puntos: data?.Puntos,
     } as Activity;
   } catch (error) {
     console.error('Error al obtener el ID de la actividad', error);
     throw new Error('Error al obtener la actividad por ID');
   }
-}
+};
 
 export const createActivity = async (activityData: NewActivity) => {
   try {
@@ -68,15 +63,16 @@ export const createActivity = async (activityData: NewActivity) => {
       return { success: false, error: validation.error.errors };
     }
 
+    // validation.data contiene la data transformada (con puntos)
     const activitiesRef = db.collection('Actividades');
-    const result = await activitiesRef.add(activityData);
+    const result = await activitiesRef.add(validation.data);
 
     return { success: true, id: result.id };
   } catch (error) {
     console.error('Error al crear la actividad: ', error);
     return { success: false, error: 'Error al crear la actividad' };
   }
-}
+};
 
 export const updateActivity = async (id: string, activityData: Partial<Activity>) => {
   try {
@@ -87,7 +83,7 @@ export const updateActivity = async (id: string, activityData: Partial<Activity>
     }
 
     const activityRef = db.collection('Actividades').doc(id);
-    await activityRef.update(activityData);
+    await activityRef.update(validation.data);
 
     return { success: true };
   } catch (error) {
@@ -100,13 +96,11 @@ export const deleteActivity = async (id: string) => {
   try {
     const activityRef = db.collection('Actividades').doc(id);
 
-    // Verificar si la actividad existe antes de intentar eliminarla
     const doc = await activityRef.get();
     if (!doc.exists) {
       return { success: false, error: 'Actividad no encontrada' };
     }
 
-    // Eliminar la actividad
     await activityRef.delete();
 
     return { success: true };
