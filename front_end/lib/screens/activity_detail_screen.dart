@@ -47,7 +47,9 @@ class RespuestaService {
         print('✅ Respuesta guardada: ${response.body}');
         return true;
       } else {
-        print('❌ Error del servidor: ${response.statusCode} - ${response.body}');
+        print(
+          '❌ Error del servidor: ${response.statusCode} - ${response.body}',
+        );
         return false;
       }
     } catch (e) {
@@ -73,11 +75,18 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
   String? userId;
   late DateTime _startTime;
 
+  late final bool esOpcionMultiple;
+  late final List<dynamic> opciones;
+  String? _respuestaSeleccionada;
+
   @override
   void initState() {
     super.initState();
     _startTime = DateTime.now();
     _loadUserId();
+
+    esOpcionMultiple = widget.activity['TipoActividad'] == 'opcion_multiple';
+    opciones = widget.activity['Opciones'] ?? [];
   }
 
   Future<void> _loadUserId() async {
@@ -94,7 +103,10 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
       return;
     }
 
-    final respuestaUsuario = _answerController.text.trim();
+    final respuestaUsuario =
+        esOpcionMultiple
+            ? _respuestaSeleccionada?.trim() ?? ''
+            : _answerController.text.trim();
 
     if (respuestaUsuario.isEmpty) {
       setState(() {
@@ -119,12 +131,14 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
         }
 
         final respuestaEsperada = respuestaEsperadaRaw.toString().trim();
-        final esCorrecto = respuestaUsuario.toLowerCase() == respuestaEsperada.toLowerCase();
+        final esCorrecto =
+            respuestaUsuario.toLowerCase() == respuestaEsperada.toLowerCase();
 
         setState(() {
-          _feedbackMessage = esCorrecto
-              ? "✅ ¡Correcto! Progreso guardado."
-              : "❌ Incorrecto, intenta de nuevo.";
+          _feedbackMessage =
+              esCorrecto
+                  ? "✅ ¡Correcto! Progreso guardado."
+                  : "❌ Incorrecto, intenta de nuevo.";
         });
 
         if (esCorrecto) {
@@ -165,17 +179,19 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Progreso guardado correctamente')));
+        const SnackBar(content: Text('Progreso guardado correctamente')),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al guardar el progreso')));
+        const SnackBar(content: Text('Error al guardar el progreso')),
+      );
     }
   }
 
   String _formatearFecha(DateTime fecha) {
     final dia = fecha.day.toString().padLeft(2, '0');
     final mes = fecha.month.toString().padLeft(2, '0');
-    final anio = fecha.year.toString().substring(2);
+    final anio = fecha.year.toString().substring(2); // formato aa
     return "$dia-$mes-$anio";
   }
 
@@ -193,30 +209,53 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 20),
-            const Text(
-              "Código base:",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              color: Colors.grey.shade200,
-              child: const Text(
-                "public class Main {\n"
-                "  public static void main(String[] args) {\n"
-                "    // Escribe aquí tu código\n"
-                "  }\n"
-                "}",
-                style: TextStyle(fontFamily: "monospace"),
+            if (!esOpcionMultiple) ...[
+              const Text(
+                "Código base:",
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _answerController,
-              decoration: const InputDecoration(labelText: "Tu respuesta aquí"),
-            ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                color: Colors.grey.shade200,
+                child: const Text(
+                  "public class Main {\n"
+                  "  public static void main(String[] args) {\n"
+                  "    // Escribe aquí tu código\n"
+                  "  }\n"
+                  "}",
+                  style: TextStyle(fontFamily: "monospace"),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+            esOpcionMultiple
+                ? Column(
+                  children:
+                      opciones.map<Widget>((opcion) {
+                        return RadioListTile<String>(
+                          title: Text(opcion),
+                          value: opcion,
+                          groupValue: _respuestaSeleccionada,
+                          onChanged: (value) {
+                            setState(() {
+                              _respuestaSeleccionada = value;
+                            });
+                          },
+                        );
+                      }).toList(),
+                )
+                : TextField(
+                  controller: _answerController,
+                  decoration: const InputDecoration(
+                    labelText: "Tu respuesta aquí",
+                  ),
+                ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _verifyAnswer,
+              onPressed:
+                  (!esOpcionMultiple || _respuestaSeleccionada != null)
+                      ? _verifyAnswer
+                      : null,
               child: const Text("Verificar"),
             ),
             const SizedBox(height: 10),

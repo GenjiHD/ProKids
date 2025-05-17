@@ -20,13 +20,13 @@ export const getActivity = async (): Promise<Activity[]> => {
         TipoActividad: data.TipoActividad,
         RespuestaEsperada: data.RespuestaEsperada,
         Opciones: data.Opciones,
-        Puntos: data.Puntos, // incluir puntos si está guardado
-      } as Activity);
+        Puntos: data.Puntos,
+      });
     });
 
     return activities;
   } catch (error) {
-    console.error('Error al obtener las actividades: ', error);
+    console.error('Error al obtener las actividades:', error);
     throw new Error('Error al obtener las actividades');
   }
 };
@@ -48,9 +48,9 @@ export const getActivityByID = async (id: string): Promise<Activity | null> => {
       RespuestaEsperada: data?.RespuestaEsperada,
       Opciones: data?.Opciones,
       Puntos: data?.Puntos,
-    } as Activity;
+    };
   } catch (error) {
-    console.error('Error al obtener el ID de la actividad', error);
+    console.error('Error al obtener la actividad por ID:', error);
     throw new Error('Error al obtener la actividad por ID');
   }
 };
@@ -63,13 +63,12 @@ export const createActivity = async (activityData: NewActivity) => {
       return { success: false, error: validation.error.errors };
     }
 
-    // validation.data contiene la data transformada (con puntos)
     const activitiesRef = db.collection('Actividades');
     const result = await activitiesRef.add(validation.data);
 
     return { success: true, id: result.id };
   } catch (error) {
-    console.error('Error al crear la actividad: ', error);
+    console.error('Error al crear la actividad:', error);
     return { success: false, error: 'Error al crear la actividad' };
   }
 };
@@ -95,8 +94,8 @@ export const updateActivity = async (id: string, activityData: Partial<Activity>
 export const deleteActivity = async (id: string) => {
   try {
     const activityRef = db.collection('Actividades').doc(id);
-
     const doc = await activityRef.get();
+
     if (!doc.exists) {
       return { success: false, error: 'Actividad no encontrada' };
     }

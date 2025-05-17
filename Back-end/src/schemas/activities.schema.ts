@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const DifficultyLevel = z.enum(['Basico', 'Intermedio', 'Avanzado']);
 export const ActivityType = z.enum(['Escritura', 'Opcion multiple']);
 
-// Lógica para calcular puntos por dificultad
+// Puntos por dificultad
 const puntosPorDificultad = {
   Basico: 10,
   Intermedio: 20,
@@ -25,24 +25,23 @@ export const baseActivitySchema = z.object({
   Opciones: z.array(z.string()).min(2, "Debe haber al menos dos opciones").optional(),
 });
 
-// Versión con lógica adicional (validación condicional)
+// Validación condicional y transformación
 export const activitySchema = baseActivitySchema
   .refine((data) => {
-    if (data.TipoActividad === "Opcion multiple") {
-      return data.Opciones && data.Opciones.length >= 2 && data.Opciones.includes(data.RespuestaEsperada);
+    if (data.TipoActividad === 'Opcion multiple') {
+      return data.Opciones?.includes(data.RespuestaEsperada);
     }
     return true;
   }, {
-    message: "Para opción múltiple, 'RespuestaEsperada' debe estar en 'Opciones'",
-    path: ["RespuestaEsperada"],
+    message: "Para opción múltiple, la respuesta esperada debe estar en las opciones.",
+    path: ['RespuestaEsperada'],
   })
   .transform((data) => {
     return {
       ...data,
-      Puntos: puntosPorDificultad[data.Dificultad], // Asigna puntos según dificultad
+      Puntos: puntosPorDificultad[data.Dificultad],
     };
   });
 
-// Schema parcial para updates
 export const activitySchemaPartial = baseActivitySchema.partial();
 
