@@ -23,7 +23,7 @@ export const getActivitiesUsers = async () => {
 export const getActivitiesUsersById = async (usuarioID: string) => {
   try {
     const snapshot = await db.collection('ActividadesUsuarios')
-      .where('UsuarioId', '==', usuarioID)
+      .where('UsuarioID', '==', usuarioID)
       .get();
 
     if (snapshot.empty) {

@@ -1,5 +1,5 @@
 # Ignorar la clave de Firebase
-/serviceAccountKey.json
+
 
 # Ignorar node_modules (dependencias de npm)
 /node_modules/

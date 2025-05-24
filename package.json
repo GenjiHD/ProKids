@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec pnpm exec ts-node Back-end/src/server.ts"
-  },
+  "dev": "nodemon --exec pnpm exec ts-node Back-end/src/server.ts",
+  "build": "tsc -p Back-end/tsconfig.json",
+  "start": "node Back-end/dist/server.js"
+},
+
   "keywords": [],
   "author": "",
   "license": "ISC",

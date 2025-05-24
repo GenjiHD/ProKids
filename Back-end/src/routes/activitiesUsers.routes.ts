@@ -16,6 +16,7 @@ router.get('/progreso', async (req, res) => {
 
 // GET: obtener el progreso de un usuario especifico
 router.get('/progreso-usuario/:usuarioID', async (req, res) => {
+  console.log("Progreso viendo");
   const { usuarioID } = req.params;
   const result = await getActivitiesUsersById(usuarioID);
 
