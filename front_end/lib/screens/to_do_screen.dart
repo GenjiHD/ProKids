@@ -65,7 +65,7 @@ class _ToDoScreenState extends State<ToDoScreen>
   Future<void> _fetchUserProgress(String id) async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.100:5000/api/progreso-usuario/$id'),
+        Uri.parse('http://localhost:5000/api/progreso-usuario/$id'),
       );
 
       if (response.statusCode == 200) {
@@ -91,7 +91,7 @@ class _ToDoScreenState extends State<ToDoScreen>
   Future<void> _fetchActivities() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.100:5000/api/activities'),
+        Uri.parse('http://localhost:5000/api/activities'),
       );
 
       if (response.statusCode == 200) {

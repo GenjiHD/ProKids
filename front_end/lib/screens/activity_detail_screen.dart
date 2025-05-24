@@ -30,7 +30,7 @@ class RespuestaUsuario {
 
 // Servicio para guardar respuestas
 class RespuestaService {
-  static const String _baseUrl = 'http://192.168..100:5000/api/progreso';
+  static const String _baseUrl = 'http://localhost:5000/api/progreso';
 
   static Future<bool> guardarRespuesta(RespuestaUsuario respuesta) async {
     try {
@@ -115,7 +115,7 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
       return;
     }
 
-    final uri = Uri.parse('http://192.168..100:5000/api/activities/$actividadId');
+    final uri = Uri.parse('http://localhost:5000/api/activities/$actividadId');
 
     try {
       final response = await http.get(uri);

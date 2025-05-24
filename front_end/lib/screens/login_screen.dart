@@ -26,7 +26,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.100:5000/api/users'),
+        Uri.parse('http://localhost:5000/api/users'),
       );
 
       if (response.statusCode == 200) {
