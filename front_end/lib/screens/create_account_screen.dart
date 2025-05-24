@@ -103,7 +103,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                         return;
                       }
 
-                      final uri = Uri.parse('http://192.168..100:5000/api/users');
+                      final uri = Uri.parse('http://localhost:5000/api/users');
 
                       try {
                         final response = await http.post(
