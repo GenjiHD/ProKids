@@ -103,7 +103,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                         return;
                       }
 
-                      final uri = Uri.parse('http://localhost:5000/api/users');
+                      final uri = Uri.parse('https://prokids-b0ri.onrender.com/api/users');
 
                       try {
                         final response = await http.post(

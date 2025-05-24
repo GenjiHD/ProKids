@@ -26,7 +26,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/users'),
+        Uri.parse('https://prokids-b0ri.onrender.com/api/users'),
       );
 
       if (response.statusCode == 200) {
