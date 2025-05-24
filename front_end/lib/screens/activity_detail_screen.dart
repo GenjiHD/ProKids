@@ -210,23 +210,7 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
             ),
             const SizedBox(height: 20),
             if (!esOpcionMultiple) ...[
-              const Text(
-                "Código base:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                color: Colors.grey.shade200,
-                child: const Text(
-                  "public class Main {\n"
-                  "  public static void main(String[] args) {\n"
-                  "    // Escribe aquí tu código\n"
-                  "  }\n"
-                  "}",
-                  style: TextStyle(fontFamily: "monospace"),
-                ),
-              ),
-              const SizedBox(height: 20),
+              
             ],
             esOpcionMultiple
                 ? Column(
@@ -248,7 +232,13 @@ class _ActivityDetailScreenState extends State<ActivityDetailScreen> {
                   controller: _answerController,
                   decoration: const InputDecoration(
                     labelText: "Tu respuesta aquí",
+                    alignLabelWithHint: true, // Alinea el label con el texto multilínea
+                    border: OutlineInputBorder(), // Opcional: añade un borde definido
                   ),
+                  keyboardType: TextInputType.multiline, // Teclado con opción de salto de línea
+                  textInputAction: TextInputAction.newline, // Acción del botón "Intro"
+                  maxLines: null, // Permite infinitas líneas (crece automáticamente)
+                  minLines: 3, // Altura inicial (3 líneas de altura)
                 ),
             const SizedBox(height: 20),
             ElevatedButton(
