@@ -1,2 +1,18 @@
-Back-end/src/config/serviceAccountKey.json
-src/serviceAccountKey.json
+# Ignorar la clave de Firebase
+serviceAccountKey.json
+
+
+# Ignorar node_modules (dependencias de npm)
+/node_modules/
+
+# Ignorar archivos de logs
+*.log
+
+# Ignorar configuraciones de IDE (como VS Code)
+.vscode/
+
+# Ignorar archivos temporales y compilados
+/dist/
+/build/
+*.tsbuildinfo
+
