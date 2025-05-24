@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
   "dev": "nodemon --exec pnpm exec ts-node Back-end/src/server.ts",
-  "build": "tsc -p Back-end/tsconfig.json",
+  "build": "tsc -p Back-end/src/tsconfig.json",
   "start": "node Back-end/dist/server.js"
 },
 
