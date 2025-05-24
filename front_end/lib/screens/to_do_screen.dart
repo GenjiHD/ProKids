@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,35 +13,79 @@ class ToDoScreen extends StatefulWidget {
 
 class _ToDoScreenState extends State<ToDoScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
+  List<dynamic> _activities = [];
+  String? userId;
+  Set<String> _actividadesResueltas = {};
+  int _selectedIndex = 1;
+
   late AnimationController _controller;
   late Animation<double> _opacity;
   late Animation<Offset> _slide;
-  List<dynamic> _activities = [];
-  String? userId;
 
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 400),
     );
-    _opacity = Tween<double>(begin: 0, end: 1).animate(_controller);
+
+    _opacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
     _slide = Tween<Offset>(
-      begin: const Offset(0, 0.2),
+      begin: const Offset(0.1, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.forward();
-    _loadUserId();
+
+    _initData();
+  }
+
+  Future<void> _initData() async {
+    await _loadUserId();
+    if (userId != null) {
+      await _fetchUserProgress(userId!);
+      await _fetchActivities();
+    }
   }
 
   Future<void> _loadUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
+    final id = prefs.getString('userId');
     setState(() {
-      userId = prefs.getString('userId');
+      userId = id;
     });
+  }
+
+  Future<void> _fetchUserProgress(String id) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:5000/api/progreso-usuario/$id'),
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> progreso = json.decode(response.body);
+        final actividadesIds =
+            progreso
+                .map<String>((item) => item['ActividadID'].toString().trim())
+                .toSet();
+
+        setState(() {
+          _actividadesResueltas = actividadesIds;
+        });
+
+        print('Actividades resueltas por usuario: $_actividadesResueltas');
+      } else {
+        _showSnackBar('Error al obtener progreso: ${response.statusCode}');
+      }
+    } catch (e) {
+      _showSnackBar('Error de conexión: $e');
+    }
   }
 
   Future<void> _fetchActivities() async {
@@ -53,9 +96,12 @@ class _ToDoScreenState extends State<ToDoScreen>
 
       if (response.statusCode == 200) {
         final List<dynamic> activities = json.decode(response.body);
+
         setState(() {
           _activities = activities;
         });
+
+        print('Actividades totales: ${_activities.length}');
       } else {
         _showSnackBar('Error al obtener actividades: ${response.statusCode}');
       }
@@ -65,45 +111,20 @@ class _ToDoScreenState extends State<ToDoScreen>
   }
 
   bool _verificarSiYaRespondio(Map<String, dynamic> activity) {
-    if (userId == null) return false;
-    List<dynamic> respuestas = activity['Respuestas'] ?? [];
-    return respuestas.any((respuesta) => respuesta['UsuarioId'] == userId);
+    final String idActividad = activity['id']?.toString().trim() ?? '';
+    return _actividadesResueltas.contains(idActividad);
   }
 
   void _navigateToActivityDetail(Map<String, dynamic> activity) {
-    bool yaRespondido = _verificarSiYaRespondio(activity);
-
-    if (!yaRespondido) {
+    final bool yaRespondida = _verificarSiYaRespondio(activity);
+    if (!yaRespondida) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ActivityDetailScreen(activity: activity),
+          builder: (_) => ActivityDetailScreen(activity: activity),
         ),
       );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue.shade50,
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade800,
-        title: Text(
-          _getAppBarTitle(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: FadeTransition(
-        opacity: _opacity,
-        child: SlideTransition(position: _slide, child: _getCurrentScreen()),
-      ),
-      bottomNavigationBar: _buildBottomNavBar(),
-    );
   }
 
   String _getAppBarTitle() {
@@ -327,24 +348,24 @@ class _ToDoScreenState extends State<ToDoScreen>
       unselectedItemColor: Colors.white70,
       currentIndex: _selectedIndex,
       onTap: (index) {
-        setState(() {
-          _selectedIndex = index;
-          if (index == 1)
-            _fetchActivities(); // Cargar actividades al seleccionar Ejercicios
-        });
+        if (index != _selectedIndex) {
+          setState(() {
+            _selectedIndex = index;
+            _controller.reset();
+            _controller.forward();
+          });
+        }
       },
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Inicio"),
         BottomNavigationBarItem(icon: Icon(Icons.flag), label: "Ejercicios"),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.help_outline),
-          label: "Tutorial",
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.school), label: "Tutorial"),
       ],
     );
   }
 
   void _showSnackBar(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
@@ -355,5 +376,27 @@ class _ToDoScreenState extends State<ToDoScreen>
     _controller.dispose();
     super.dispose();
   }
-}
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue.shade50,
+      appBar: AppBar(
+        backgroundColor: Colors.blue.shade800,
+        title: Text(
+          _getAppBarTitle(),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: FadeTransition(
+        opacity: _opacity,
+        child: SlideTransition(position: _slide, child: _getCurrentScreen()),
+      ),
+      bottomNavigationBar: _buildBottomNavBar(),
+    );
+  }
+}
