@@ -16,8 +16,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
-  final TextEditingController nicknameController =
-      TextEditingController(); // Campo Apodo
+  final TextEditingController nicknameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +51,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                     nicknameController,
                     'Apodo',
                     Icons.account_circle,
-                  ), // Campo Apodo
+                  ),
                   _buildTextField(
                     ageController,
                     'Edad',
@@ -115,14 +114,14 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                             'Correo': correo,
                             'Edad': edad,
                             'Password': password,
+                            'EjerciciosResueltos': 0, // Añadido
+                            'Puntuacion': 0,           // Añadido
                           }),
                         );
 
                         if (response.statusCode == 201) {
-                          // Usuario creado correctamente
                           Navigator.popAndPushNamed(context, '/login');
                         } else {
-                          // Algo salió mal
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(

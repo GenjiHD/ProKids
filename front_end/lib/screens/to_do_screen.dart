@@ -11,6 +11,8 @@ class ToDoScreen extends StatefulWidget {
   _ToDoScreenState createState() => _ToDoScreenState();
 }
 
+// ... (imports y clase ToDoScreen sin cambios)
+
 class _ToDoScreenState extends State<ToDoScreen>
     with SingleTickerProviderStateMixin {
   List<dynamic> _activities = [];
@@ -123,7 +125,11 @@ class _ToDoScreenState extends State<ToDoScreen>
         MaterialPageRoute(
           builder: (_) => ActivityDetailScreen(activity: activity),
         ),
-      );
+      ).then((_) {
+        if (userId != null) {
+          _fetchUserProgress(userId!); // 👈 Aquí se actualiza el progreso
+        }
+      });
     }
   }
 
